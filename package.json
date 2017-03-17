@@ -1,0 +1,23 @@
+{
+	"name": "pods-racing",
+	"version": "0.0.1",
+	"description": "Strategy game based on pods racing",
+	"private": true,
+	"dependencies": {
+		"couchbase": "^2.3.0",
+		"q": "^1.4.1",
+		"uuid": "^3.0.1"
+	},
+	"devDependencies": {
+		"chai": "^3.5.0",
+		"chai-as-promised": "^6.0.0",
+		"eslint": "^3.17.1",
+		"intern": "^3.4.2"
+	},
+	"author": "CodeTroopers",
+	"license": "GPL-3.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/CodeTroopers/pods-racing.git"
+	}
+}
