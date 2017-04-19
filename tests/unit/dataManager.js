@@ -96,10 +96,10 @@ define(["intern!bdd", "chai", "chai-as-promised", "q", "configuration", "core/da
 			}).then(function (id) {
 				return dataManager.getById("User", id);
 			});
-			return promise.should.fulfilled.and.eventually.contain.all.keys({
+			return promise.should.fulfilled.and.eventually.include({
 				type: "User",
 				name: "test"
-			}).and.have.property("id").ok;
+			}).and.have.property("id").be.ok;
 		});
 
 		bdd.it("should save modified data", function () {
@@ -133,6 +133,11 @@ define(["intern!bdd", "chai", "chai-as-promised", "q", "configuration", "core/da
 			var promise = dataManager.disconnect().then(function () {
 				return q.all([dataManager.get("SELECT * FROM $"), dataManager.get("SELECT * FROM $")]);
 			});
+			return promise.should.fulfilled;
+		});
+
+		bdd.it("should execute view", function () {
+			var promise = dataManager.executeView("Race", "activeRaces");
 			return promise.should.fulfilled;
 		});
 	});

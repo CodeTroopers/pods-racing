@@ -8,7 +8,8 @@ define({
 	},
 
 	// Unit test suite(s) to run in each browser
-	suites: ["tests/unit/dataManager"], //, "tests/unit/api"],
+	//suites: ["tests/unit/dataManager", "tests/unit/user"],
+	suites: ["tests/unit/race"],
 
 	// Functional test suite(s) to execute against each browser once unit tests are completed
 	functionalSuites: [ /* "myPackage/tests/functional" */ ],

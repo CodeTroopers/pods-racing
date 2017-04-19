@@ -1,3 +1,5 @@
+"use strict";
+
 define(["couchbase", "q", "uuid", "configuration"], function (couchbase, q, uuid, configuration) {
 	var cluster, bucket;
 	var options = {
@@ -126,6 +128,12 @@ define(["couchbase", "q", "uuid", "configuration"], function (couchbase, q, uuid
 		});
 	}
 
+	function executeView(type, viewName) {
+		return execute(function (callback) {
+			bucket.query(couchbase.ViewQuery.from(type, viewName).stale(couchbase.ViewQuery.Update.BEFORE), callback);
+		});
+	}
+
 	function removeAll() {
 		return execute(function (callback) {
 			bucket.manager().flush(callback);
@@ -136,6 +144,7 @@ define(["couchbase", "q", "uuid", "configuration"], function (couchbase, q, uuid
 		options: options,
 		get: get,
 		getById: getById,
+		executeView: executeView,
 		save: save,
 		disconnect: disconnect,
 		removeAll: removeAll
