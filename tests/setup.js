@@ -65,7 +65,7 @@ global.intern.on("beforeRun", function () {
 	}
 
 	// active test mode
-	// TODO: set test to true to active couchebase mock and remove dataManager.removeAll
+	// TODO: set test to true to active couchbase mock and remove dataManager.removeAll
 	configuration.test = false;
 
 	configuration.couchbase.bucketName += "-test";
