@@ -1,0 +1,36 @@
+{
+	"environments": [
+		"node"
+	],
+	"plugins": [
+		"node_modules/babel-register/lib/node.js",
+		"tests/setup.js"
+	],
+	"instrumenterOptions": {
+		"esModules": true
+	},
+	"coverage": [
+		"!**/design.js",
+		"src/**/*.js"
+	],
+	"suites": [
+		"tests/unit/date.js",
+		"tests/unit/dataManager.js",
+		"tests/unit/model.js",
+		"tests/unit/pod.js",
+		"tests/unit/race.js",
+		"tests/unit/environmentObject.js"
+	],
+	"reporters": [
+		"runner",
+		{
+			"name": "htmlcoverage",
+			"watermarks": {
+				"statements": [70, 95],
+				"lines": [70, 95],
+				"functions": [70, 95],
+				"branches": [70, 95]
+			}
+		}
+	]
+}

@@ -1,75 +1,72 @@
-"use strict";
+import dataManager from "dataManager";
+import { Pods, Pod } from "models/pod";
+import chai from "chai";
+import chaiAsPromised from "chai-as-promised";
 
-define(["intern!bdd", "chai", "chai-as-promised", "configuration", "core/dataManager", "core/models/pod"], function (bdd, chai, chaiAsPromised, configuration, dataManager, Pod) {
-	chai.use(chaiAsPromised);
-	// add should on prototype
-	var should = chai.should();
-	// active test mode
-	// TODO: set test to true to active couchebase mock and remove dataManager.removeAll
-	configuration.test = false;
+const bdd = global.intern.getInterface("bdd");
 
-	bdd.describe("Test pod", function () {
-		bdd.before(function () {
-			// executes before suite starts
-			return dataManager.removeAll().fail(function (reason) {
-				throw reason;
-			});
+chai.use(chaiAsPromised);
+// add should on prototype
+chai.should();
+
+bdd.describe("Test pod", () => {
+	bdd.before(() => {
+		// executes before suite starts
+	});
+
+	bdd.after(() => {
+		// executes after suite ends
+		return dataManager.disconnect();
+	});
+
+	bdd.beforeEach(() => {
+		// executes before each test
+	});
+
+	bdd.afterEach(() => {
+		// executes after each test
+		//return dataManager.removeAll();
+	});
+
+	bdd.it("should create a pod", () => {
+		const pod = new Pod("test");
+		const promise = pod.save().then(() => {
+			pod.should.be.an.instanceof(Pod);
+			pod.should.have.property("id").ok;
+			pod.should.have.property("name").equal("test");
 		});
+		return promise.should.be.fulfilled;
+	});
 
-		bdd.after(function () {
-			// executes after suite ends
-			dataManager.removeAll().then(function () {
-				dataManager.disconnect();
-			}).fail(function (reason) {
-				throw reason;
-			});
+	bdd.it("should get a pod", () => {
+		const expected = {
+			id: null,
+			name: "test"
+		};
+		const pod = new Pod(expected.name);
+		const promise = pod.save().then(() => {
+			expected.id = pod.id;
+			return Pod.get(expected.id);
 		});
+		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(Pod).and.include(expected);
+	});
 
-		bdd.beforeEach(function () {
-			// executes before each test
+	bdd.it("should update a pod", () => {
+		const expected = {
+			id: null,
+			name: "modified test"
+		};
+		const pod = new Pod("original test");
+		const promise = pod.save().then(() => {
+			expected.id = pod.id;
+			pod.name = expected.name;
+			return pod.save().then(() => Pod.get(pod.id));
 		});
+		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(Pod).and.include(expected);
+	});
 
-		bdd.afterEach(function () {
-			// executes after each test
-		});
-
-		bdd.it("should create a pod", function () {
-			var pod = new Pod("test");
-			var promise = pod.save().then(function () {
-				pod.should.be.an.instanceof(Pod);
-				pod.should.have.property("id").ok;
-				pod.should.have.property("name").equal("test");
-			});
-			return promise.should.fulfilled;
-		});
-
-		bdd.it("should get a pod", function () {
-			var expected = {
-				id: null,
-				name: "test"
-			};
-			var pod = new Pod(expected.name);
-			var promise = pod.save().then(function () {
-				expected.id = pod.id;
-				return Pod.get(expected.id);
-			});
-			return promise.should.fulfilled.and.eventually.be.an.instanceof(Pod).and.include(expected);
-		});
-
-		bdd.it("should update a pod", function () {
-			var expected = {
-				id: null,
-				name: "modified test"
-			};
-			var pod = new Pod("original test");
-			var promise = pod.save().then(function () {
-				expected.id = pod.id;
-				pod.name = expected.name;
-				return pod.save().then(function () {
-					return Pod.get(pod.id);
-				});
-			});
-			return promise.should.fulfilled.and.eventually.be.an.instanceof(Pod).and.include(expected);
-		});
+	bdd.it("should get pods", () => {
+		const promise = Pods.get();
+		return promise.should.be.fulfilled.and.eventually.be.an("array");
 	});
 });

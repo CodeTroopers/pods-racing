@@ -1,144 +1,159 @@
-"use strict";
+import dataManager from "dataManager";
+import chai from "chai";
+import chaiAsPromised from "chai-as-promised";
 
-define(["intern!bdd", "chai", "chai-as-promised", "q", "configuration", "core/dataManager"], function (bdd, chai, chaiAsPromised, q, configuration, dataManager) {
-	chai.use(chaiAsPromised);
-	// add should on prototype
-	var should = chai.should();
-	// active test mode
-	// TODO: set test to true to active couchebase mock and remove dataManager.removeAll
-	configuration.test = false;
-	var server = dataManager.options.server;
-	var bucketName = dataManager.options.bucketName;
+const bdd = global.intern.getInterface("bdd");
 
-	bdd.describe("Test data manager", function () {
-		bdd.before(function () {
-			// executes before suite starts
-			return dataManager.removeAll().fail(function (reason) {
-				throw reason;
+chai.use(chaiAsPromised);
+// add should on prototype
+chai.should();
+
+bdd.describe("Test data manager", () => {
+	let server, bucketName, password;
+
+	bdd.before(() => {
+		// executes before suite starts
+		server = dataManager.options.server;
+		password = dataManager.options.password;
+		bucketName = dataManager.options.bucketName;
+	});
+
+	bdd.after(() => {
+		// executes after suite ends
+		return dataManager.disconnect();
+	});
+
+	bdd.beforeEach(() => {
+		// executes before each test
+	});
+
+	bdd.afterEach(() => {
+		// executes after each test
+		// restore server name
+		if (dataManager.options.server !== server) {
+			dataManager.options.server = server;
+			dataManager.disconnect();
+		}
+		// restore password
+		if (dataManager.options.password !== password) {
+			dataManager.options.password = password;
+			dataManager.disconnect();
+		}
+		// restore bucket name
+		if (dataManager.options.bucketName !== bucketName) {
+			dataManager.options.bucketName = bucketName;
+			dataManager.disconnect();
+		}
+		//return dataManager.removeAll();
+	});
+
+	bdd.it("should failed if server is down", () => {
+		const promise = dataManager.disconnect().then(() => {
+			dataManager.options.server = "nonexistingServer";
+			return dataManager.get("SELECT * FROM $");
+		});
+		return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(21);
+	});
+
+	bdd.it("should failed if authentication is invalid", () => {
+		const promise = dataManager.disconnect().then(() => {
+			dataManager.options.password = "xxxxxxx";
+			return dataManager.get("SELECT * FROM $");
+		});
+		return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(2);
+	});
+
+	bdd.it("should failed if bucket doesn't exist", () => {
+		const promise = dataManager.disconnect().then(() => {
+			dataManager.options.bucketName = "test";
+			return dataManager.get("SELECT * FROM $");
+		});
+		return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(2);
+	});
+
+	bdd.it("should failed if query is empty", () => {
+		const promise = dataManager.get();
+		return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(1050);
+	});
+
+	bdd.it("should failed if query is invalid", () => {
+		const promise = dataManager.get("test");
+		return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(3000);
+	});
+
+	bdd.it("should get data", () => {
+		const promise = dataManager.get("SELECT * FROM $");
+		return promise.should.be.fulfilled.and.eventually.be.an("array");
+	});
+
+	bdd.it("should get data with parameters", () => {
+		const promise = dataManager.get("SELECT * FROM $ WHERE name =$1 AND type = $2", ["test", "User"]);
+		return promise.should.be.fulfilled.and.eventually.be.an("array");
+	});
+
+	bdd.it("should save data", () => {
+		const promise = dataManager.save({
+			type: "User",
+			name: "test"
+		});
+		return promise.should.be.fulfilled.and.eventually.be.ok;
+	});
+
+	bdd.it("should get data by id", () => {
+		const promise = dataManager.save({
+			type: "User",
+			name: "test"
+		}).then((id) => dataManager.getById("User", id));
+		return promise.should.be.fulfilled.and.eventually.include({
+			type: "User",
+			name: "test"
+		}).and.have.property("id").be.ok;
+	});
+
+	bdd.it("should save modified data", () => {
+		const promise = dataManager.save({
+			type: "User",
+			name: "test"
+		}).then((id) => {
+			return dataManager.getById("User", id).then((data) => {
+				data.name = "modified test";
+				return dataManager.save(data).then((id) => dataManager.getById("User", id));
 			});
 		});
+		return promise.should.be.fulfilled.and.eventually.have.property("name").equal("modified test");
+	});
 
-		bdd.after(function () {
-			// executes after suite ends
-			dataManager.removeAll().then(function () {
-				dataManager.disconnect();
-			}).fail(function (reason) {
-				throw reason;
-			});
+	bdd.it("should fail if type is not defined", () => {
+		const promise = dataManager.save({
+			name: "test"
 		});
+		return promise.should.be.rejectedWith(Error);
+	});
 
-		bdd.beforeEach(function () {
-			// executes before each test
-		});
-
-		bdd.afterEach(function () {
-			// executes after each test
-			// restore server name
-			if (dataManager.options.server !== server) {
-				dataManager.options.server = server;
-				dataManager.disconnect();
+	bdd.it("should save if type can be deduced", () => {
+		class Test {
+			constructor(name) {
+				this.name = name;
 			}
-			// retore bucket name
-			if (dataManager.options.bucketName !== bucketName) {
-				dataManager.options.bucketName = bucketName;
-				dataManager.disconnect();
-			}
-		});
+		}
+		const promise = dataManager.save(new Test("test"));
+		return promise.should.be.fulfilled.and.eventually.be.ok;
+	});
 
-		bdd.it("should failed if server is down", function () {
-			var promise = dataManager.disconnect().then(function () {
-				dataManager.options.server = "unexistingServer";
-				return dataManager.get("SELECT * FROM $");
-			});
-			return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(21);
-		});
+	bdd.it("should remove all data", () => {
+		const promise = dataManager.removeAll();
+		return promise.should.be.fulfilled;
+	});
 
-		bdd.it("should failed if bucket doesn't exist", function () {
-			var promise = dataManager.disconnect().then(function () {
-				dataManager.options.bucketName = "test";
-				return dataManager.get("SELECT * FROM $");
-			});
-			return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(2);
+	bdd.it("should wait initialization", () => {
+		const promise = dataManager.disconnect().then(() => {
+			return Promise.all([dataManager.get("SELECT * FROM $"), dataManager.get("SELECT * FROM $")]);
 		});
+		return promise.should.be.fulfilled;
+	});
 
-		bdd.it("should failed if query is empty", function () {
-			var promise = dataManager.get();
-			return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(1050);
-		});
-
-		bdd.it("should failed if query is invalid", function () {
-			var promise = dataManager.get("test");
-			return promise.should.be.rejectedWith(Error).and.eventually.have.property("code").equal(3000);
-		});
-
-		bdd.it("should get data", function () {
-			var promise = dataManager.get("SELECT * FROM $");
-			return promise.should.fulfilled.and.eventually.be.an("array");
-		});
-
-		bdd.it("should get data with parameters", function () {
-			var promise = dataManager.get("SELECT * FROM $ WHERE name =$1 AND type = $2", ["test", "User"]);
-			return promise.should.fulfilled.and.eventually.be.an("array");
-		});
-
-		bdd.it("should save data", function () {
-			var promise = dataManager.save({
-				type: "User",
-				name: "test"
-			});
-			return promise.should.fulfilled.and.eventually.be.ok;
-		});
-
-		bdd.it("should get data by id", function () {
-			var promise = dataManager.save({
-				type: "User",
-				name: "test"
-			}).then(function (id) {
-				return dataManager.getById("User", id);
-			});
-			return promise.should.fulfilled.and.eventually.include({
-				type: "User",
-				name: "test"
-			}).and.have.property("id").be.ok;
-		});
-
-		bdd.it("should save modified data", function () {
-			var promise = dataManager.save({
-				type: "User",
-				name: "test"
-			}).then(function (id) {
-				return dataManager.getById("User", id).then(function (data) {
-					data.name = "modified test";
-					return dataManager.save(data).then(function (id) {
-						return dataManager.getById("User", id);
-					});
-				});
-			});
-			return promise.should.fulfilled.and.eventually.have.property("name").equal("modified test");
-		});
-
-		bdd.it("should fail if type is not defined", function () {
-			var promise = dataManager.save({
-				name: "test"
-			});
-			return promise.should.be.rejectedWith(Error);
-		});
-
-		bdd.it("should remove all data", function () {
-			var promise = dataManager.removeAll();
-			return promise.should.fulfilled;
-		});
-
-		bdd.it("should wait initialization", function () {
-			var promise = dataManager.disconnect().then(function () {
-				return q.all([dataManager.get("SELECT * FROM $"), dataManager.get("SELECT * FROM $")]);
-			});
-			return promise.should.fulfilled;
-		});
-
-		bdd.it("should execute view", function () {
-			var promise = dataManager.executeView("Race", "activeRaces");
-			return promise.should.fulfilled;
-		});
+	bdd.it("should execute view", () => {
+		const promise = dataManager.executeView("Race", "activeRaces");
+		return promise.should.be.fulfilled;
 	});
 });

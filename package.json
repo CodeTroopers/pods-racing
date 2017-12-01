@@ -1,27 +1,29 @@
 {
-  "name": "pods-racing",
-  "version": "0.0.1",
-  "description": "Strategy game based on pods racing",
-  "private": true,
-  "scripts": {
-    "test": "intern-client config=tests/config"
-  },
-  "dependencies": {
-    "couchbase": "^2.3.0",
-    "q": "^1.4.1",
-    "uuid": "^3.0.1"
-  },
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "eslint": "^3.17.1",
-    "intern": "^3.4.2",
-    "requirejs": "^2.3.3"
-  },
-  "author": "CodeTroopers",
-  "license": "GPL-3.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/CodeTroopers/pods-racing.git"
-  }
+	"name": "pods-racing",
+	"version": "0.0.1",
+	"description": "Strategy game based on pods racing",
+	"private": true,
+	"scripts": {
+		"lint": "eslint .",
+		"test": "intern",
+		"debug-test": "node --inspect=5858 ./node_modules/intern/bin/intern.js"
+	},
+	"dependencies": {
+		"couchbase": "^2.4.2"
+	},
+	"devDependencies": {
+		"babel-plugin-module-resolver": "^3.0.0",
+		"babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+		"babel-register": "^6.26.0",
+		"chai": "^4.1.2",
+		"chai-as-promised": "^7.1.1",
+		"eslint": "^4.10.0",
+		"intern": "^4.1.1"
+	},
+	"author": "CodeTroopers",
+	"license": "GPL-3.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/CodeTroopers/pods-racing.git"
+	}
 }
