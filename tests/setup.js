@@ -19,8 +19,6 @@ global.intern.on("beforeRun", function () {
 	function authenticate() {
 		return promisify((callback) => {
 			try {
-				console.log(configuration.couchbase.userName);
-				console.log(configuration.couchbase.password);
 				cluster.authenticate(configuration.couchbase.userName, configuration.couchbase.password);
 				callback();
 			}
@@ -32,7 +30,6 @@ global.intern.on("beforeRun", function () {
 
 	function open() {
 		return promisify((callback) => {
-			console.log("open" + configuration.couchbase.bucketName);
 			bucket = cluster.openBucket(configuration.couchbase.bucketName, callback);
 		});
 	}
