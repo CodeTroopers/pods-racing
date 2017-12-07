@@ -28,7 +28,7 @@ bdd.describe("Test race", () => {
 
 	bdd.afterEach(() => {
 		// executes after each test
-		//return dataManager.removeAll();
+		return dataManager.removeAll();
 	});
 
 	bdd.it("should create a race", () => {

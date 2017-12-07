@@ -44,7 +44,8 @@ bdd.describe("Test data manager", () => {
 			dataManager.options.bucketName = bucketName;
 			dataManager.disconnect();
 		}
-		//return dataManager.removeAll();
+		// delete data
+		return dataManager.removeAll();
 	});
 
 	bdd.it("should failed if server is down", () => {

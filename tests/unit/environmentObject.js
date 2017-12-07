@@ -25,7 +25,7 @@ bdd.describe("Test environment object", () => {
 
 	bdd.afterEach(() => {
 		// executes after each test
-		//return dataManager.removeAll();
+		return dataManager.removeAll();
 	});
 
 	bdd.it("should create an environment object", () => {

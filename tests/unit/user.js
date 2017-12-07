@@ -28,7 +28,7 @@ bdd.describe("Test user", () => {
 
 	bdd.afterEach(() => {
 		// executes after each test
-		//return dataManager.removeAll();
+		return dataManager.removeAll();
 	});
 
 	bdd.it("should create a user", () => {

@@ -25,7 +25,7 @@ bdd.describe("Test model", () => {
 
 	bdd.afterEach(() => {
 		// executes after each test
-		//return dataManager.removeAll();
+		return dataManager.removeAll();
 	});
 
 	bdd.it("should create a model", () => {
@@ -98,63 +98,5 @@ bdd.describe("Test model", () => {
 	bdd.it("should get models from view with invalid type", () => {
 		const promise = Models.getFromView("Models", Date);
 		return promise.should.be.rejectedWith(Error).and.eventually.have.property("message").equal("Date must inherit from Model");
-	});
-
-	bdd.it("should get models TO DELETE", () => {
-		const couchbase = require("couchbase");
-		const cluster = new couchbase.Cluster("couchbase://localhost:8091");
-		let bucket;
-		const promise = new Promise((resolve, reject) => {
-			cluster.authenticate("Troopers", "(LH2203nl)");
-			bucket = cluster.openBucket("pods-racing", (error) => {
-				if (error) {
-					console.log("open failed");
-					console.log(error);
-					reject();
-				}
-				else {
-					console.log("open success");
-					//resolve();
-					bucket.query(couchbase.N1qlQuery.fromString("SELECT pr.* FROM `pods-racing` pr WHERE type = \"Model\" and name = $1"), ["test get models"], (error, result) => {
-						if (error) {
-							console.log("query failed");
-							console.log(error);
-							reject();
-						}
-						else {
-							console.log("query success");
-							console.log(result);
-							//result.should.be.an("array").have.lengthOf(1);
-							resolve(result);
-							bucket.disconnect();
-						}
-					});
-				}
-			});
-		});
-
-		/*.then(() => {
-			return new Promise((resolve, reject) => {
-				bucket.query(couchbase.N1qlQuery.fromString("SELECT pr.* FROM `pods-racing` pr WHERE type = \"Pod\""), [], (error, result) => {
-					if (error) {
-						console.log("query failed");
-						console.log(error);
-						reject();
-					}
-					else {
-						console.log("query success");
-						console.log(result);
-						//result.should.be.an("array").have.lengthOf(5);
-						resolve();
-					}
-					bucket.disconnect();
-				});
-			});
-		})*/
-		/*.then(() => new Promise((resolve, reject) => {
-			bucket.disconnect();
-			resolve();
-		}));*/
-		return promise.should.be.fulfilled.and.eventually.be.an("array").have.lengthOf(1);
 	});
 });

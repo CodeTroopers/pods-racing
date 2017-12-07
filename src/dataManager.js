@@ -68,7 +68,7 @@ function toN1qlQuery(query) {
 		query = query.replace(/\s\$\s|\s\$$/g, " `" + options.bucketName + "` ");
 	}
 
-	return couchbaseWrapper.N1qlQuery.fromString(query);
+	return couchbaseWrapper.N1qlQuery.fromString(query).consistency(couchbase.N1qlQuery.Consistency.REQUEST_PLUS);
 }
 
 export default {
@@ -132,7 +132,6 @@ export default {
 
 	removeAll() {
 		return execute((callback) => {
-			//bucket.manager().flush(callback);
 			bucket.query(toN1qlQuery("DELETE FROM $"), callback);
 		});
 	}
