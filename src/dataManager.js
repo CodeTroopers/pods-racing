@@ -127,6 +127,11 @@ export default {
 	executeView(type, viewName) {
 		return execute((callback) => {
 			bucket.query(couchbaseWrapper.ViewQuery.from(type, viewName).stale(couchbaseWrapper.ViewQuery.Update.BEFORE), callback);
+		}).then((rows) => {
+			return rows.map(row => {
+				row.value.id = row.id;
+				return row.value;
+			});
 		});
 	},
 
