@@ -76,7 +76,10 @@ bdd.describe("Test race", () => {
 	});
 
 	bdd.it("should get active races", () => {
-		const race1 = new Race("active race");
+		const expected = {
+			name: "active race"
+		};
+		const race1 = new Race(expected.name);
 		race1.startDate = new Date().subtractDays(1);
 		race1.endDate = new Date().addDays(1);
 		const race2 = new Race("no started race");
@@ -87,7 +90,7 @@ bdd.describe("Test race", () => {
 		race4.startDate = new Date().subtractDays(2);
 		race4.endDate = new Date().subtractDays(1);
 		const promise = Promise.all([race1.save(), race2.save(), race3.save(), race4.save()]).then(() => Races.getActiveRaces());
-		return promise.should.be.fulfilled.and.eventually.be.an("array").have.lengthOf(1).with.deep.property("0").instanceof(Race);
+		return promise.should.be.fulfilled.and.eventually.be.an("array").have.lengthOf(1).with.deep.property("0").instanceof(Race).and.include(expected);
 	});
 
 	bdd.it("should get pods of a race", () => {
