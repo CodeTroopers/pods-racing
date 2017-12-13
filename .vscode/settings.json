@@ -1,2 +1,24 @@
 {
+	// Mettre à jour automatiquement les extensions
+	"extensions.autoUpdate": false,
+    // Specifies the color theme used in the workbench.
+	"workbench.colorTheme": "Visual Studio Dark",
+    // Specifies the icon theme used in the workbench.
+	"workbench.iconTheme": "vscode-icons",
+    // Quand vous ouvrez un fichier, 'editor.tabSize' et 'editor.insertSpaces' sont détectés en fonction du contenu du fichier.
+	"editor.detectIndentation": false,
+    // Des espaces sont insérés quand vous appuyez sur la touche Tab. Ce paramètre est remplacé en fonction du contenu du fichier quand 'editor.detectIndentation' est activé.
+	"editor.insertSpaces": false,
+    // Nombre d'espaces correspondant à une tabulation. Ce paramètre est remplacé en fonction du contenu du fichier quand 'editor.detectIndentation' est activé.
+	"editor.tabSize": 4,
+    // Contrôle si les suggestions doivent s'afficher automatiquement en cours de frappe
+	"editor.quickSuggestions": {
+        "other": true,
+        "comments": true,
+        "strings": true
+    },
+	// Contrôle si l'éditeur doit automatiquement mettre en forme le contenu collé. Un formateur doit être disponible et doit pouvoir mettre en forme une plage dans un document.
+	"editor.formatOnPaste": true,
+	// Caractère de fin de ligne par défaut.
+	"files.eol": "\n"
 }
