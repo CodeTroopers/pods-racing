@@ -94,12 +94,12 @@ export default {
 			}
 		}
 
-		return (data.id ? Promise.resolve(data.id) : getCounterValue(data.type + "Counter")).then((id) => {
+		return (data.id ? Promise.resolve(data.id) : getCounterValue(data.type + "Counter").then((value) => `${data.type}::${value}`)).then((id) => {
 			// ensure id is not in data
 			data.id = undefined;
 
 			return execute((callback) => {
-				bucket.upsert(data.type + "::" + id, data, callback);
+				bucket.upsert(id, data, callback);
 			}).then(() => {
 				return id;
 			});
@@ -115,9 +115,9 @@ export default {
 		});
 	},
 
-	getById(type, id) {
+	getById(id) {
 		return execute((callback) => {
-			bucket.get(type + "::" + id, callback);
+			bucket.get(id, callback);
 		}).then((result) => {
 			result.value.id = id;
 			return result.value;

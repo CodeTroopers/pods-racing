@@ -104,7 +104,7 @@ bdd.describe("Test data manager", () => {
 		const promise = dataManager.save({
 			type: "User",
 			name: "test"
-		}).then((id) => dataManager.getById("User", id));
+		}).then((id) => dataManager.getById(id));
 		return promise.should.be.fulfilled.and.eventually.include({
 			type: "User",
 			name: "test"
@@ -116,9 +116,9 @@ bdd.describe("Test data manager", () => {
 			type: "User",
 			name: "test"
 		}).then((id) => {
-			return dataManager.getById("User", id).then((data) => {
+			return dataManager.getById(id).then((data) => {
 				data.name = "modified test";
-				return dataManager.save(data).then((id) => dataManager.getById("User", id));
+				return dataManager.save(data).then((id) => dataManager.getById(id));
 			});
 		});
 		return promise.should.be.fulfilled.and.eventually.have.property("name").equal("modified test");
@@ -156,5 +156,13 @@ bdd.describe("Test data manager", () => {
 	bdd.it("should execute view", () => {
 		const promise = dataManager.executeView("Race", "activeRaces");
 		return promise.should.be.fulfilled;
+	});
+
+	bdd.it("should get data from view", () => {
+		const promise = dataManager.save({
+			type: "Model",
+			name: "test"
+		}).then(() => dataManager.executeView("Model", "Models"));
+		return promise.should.be.fulfilled.and.eventually.be.an("array");
 	});
 });

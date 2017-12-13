@@ -27,7 +27,7 @@ export default class User {
 	}
 
 	static get(id) {
-		return dataManager.getById(type, id).then((data) => {
+		return dataManager.getById(id).then((data) => {
 			let user = new User();
 			//Object.assign(user, data);
 			return user;

@@ -15,7 +15,7 @@ class Model {
 		if(type !== Model && !Model.isPrototypeOf(type))
 			return Promise.reject(new Error(`${type.name} must inherit from ${Model.name}`));
 
-		return dataManager.getById(type.name, id).then((data) => {
+		return dataManager.getById(id).then((data) => {
 			const object = new type();
 			Object.assign(object, data);
 			return object;
