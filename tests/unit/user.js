@@ -1,7 +1,6 @@
 import dataManager from "dataManager";
-import { Races, Race } from "models/race";
+import { Users, User } from "models/user";
 import { Pod } from "models/pod";
-import { EnvironmentObject } from "models/environmentObject";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import "date";
@@ -54,6 +53,31 @@ bdd.describe("Test user", () => {
 		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(User).and.include(expected);
 	});
 
+	bdd.it("should get a user by name", () => {
+		const expected = {
+			id: null,
+			name: "new user"
+		};
+		const user = new User(expected.name);
+		const promise = user.save().then(() => {
+			expected.id = user.id;
+			return User.getByName(expected.name);
+		});
+		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(User).and.include(expected);
+	});
+
+	bdd.it("should fail when getting a user with name which does not exist", () => {
+		const promise = User.getByName("test");
+		return promise.should.be.rejectedWith(Error).and.eventually.have.property("message").equal("User with name \"test\" doesn't exist");
+	});
+
+	bdd.it("should fail when getting a user with name on several users", () => {
+		const user1 = new User("test");
+		const user2 = new User("test");
+		const promise = Promise.all([user1.save(), user2.save()]).then(() => User.getByName("test"));
+		return promise.should.be.rejectedWith(Error).and.eventually.have.property("message").equal("There are several users with name \"test\"");
+	});
+
 	bdd.it("should update a user", () => {
 		const expected = {
 			id: null,
@@ -71,29 +95,24 @@ bdd.describe("Test user", () => {
 	});
 
 	bdd.it("should create a user with pods", () => {
-		const pods = [{
-			name: "pods1"
-		}, {
-			name: "pods2"
-		}];
-		const user = new User("user-with-pods");
-		user.pods = pods;
-		return user.save().then(() => {
-			user.should.be.an.instanceof(User);
-			user.should.have.property("id");
-			user.should.have.property("pods").equal(pods);
-
-			return user.getPods().then((result) => {
-				result.should.be.an("array");
-
-				let i = 0;
-				for (const pod of result) {
-					pod.should.be.an.instanceof(Pod);
-					pod.should.have.property("name").equal(pods[i].name);
-					pod.should.have.property("userId").equal(user.id);
-					i++;
-				}
+		const expected = {
+			name: "pod of user"
+		};
+		const user = new User("user with pods");
+		const promise = user.save().then(() => {
+			expected.userId = user.id;
+			const pod = new Pod(expected.name);
+			pod.userId = user.id;
+			return pod.save().then(() => {
+				expected.id = pod.id;
+				return user.getPods();
 			});
 		});
+		return promise.should.be.fulfilled.and.eventually.be.an("array").have.lengthOf(1).with.deep.property("0").instanceof(Pod).and.include(expected);
+	});
+
+	bdd.it("should get users", () => {
+		const promise = Users.get();
+		return promise.should.be.fulfilled.and.eventually.be.an("array");
 	});
 });
