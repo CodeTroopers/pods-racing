@@ -41,3 +41,6 @@ jspm_packages
 
 # Data
 data
+
+# Environment variable
+.env

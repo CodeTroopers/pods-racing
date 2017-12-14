@@ -14,12 +14,7 @@
 		"src/**/*.js"
 	],
 	"suites": [
-		"tests/unit/date.js",
-		"tests/unit/dataManager.js",
-		"tests/unit/model.js",
-		"tests/unit/pod.js",
-		"tests/unit/race.js",
-		"tests/unit/environmentObject.js"
+		"tests/unit/**/*.js"
 	],
 	"reporters": [
 		"runner",

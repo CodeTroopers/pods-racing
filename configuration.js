@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+// Load environment variables
+dotenv.config();
+
 // Application configuration file
 let configuration = {
 	// configuration for the couch base
@@ -9,9 +13,9 @@ let configuration = {
 		// port
 		port: "8091",
 		// user name
-		userName: "---",
+		userName: process.env.login,
 		// password
-		password: "---",
+		password: process.env.password,
 		// bucket name
 		bucketName: "pods-racing"
 	},
