@@ -1,7 +1,5 @@
 {
-	// Mettre à jour automatiquement les extensions
-	"extensions.autoUpdate": false,
-    // Specifies the color theme used in the workbench.
+	// Specifies the color theme used in the workbench.
 	"workbench.colorTheme": "Visual Studio Dark",
     // Specifies the icon theme used in the workbench.
 	"workbench.iconTheme": "vscode-icons",

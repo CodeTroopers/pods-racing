@@ -14,7 +14,19 @@
 		"src/**/*.js"
 	],
 	"suites": [
-		"tests/unit/**/*.js"
+		//"tests/unit/**/*.js"
+		//"tests/unit/dataManager.js",
+		//"tests/unit/date.js",
+		"tests/unit/dbSet.js"
+		//"tests/unit/engine.js",
+		//"tests/unit/environmentObject.js",
+		//"tests/unit/gravity.js",
+		//"tests/unit/model.js",
+		//"tests/unit/pod.js",
+		//"tests/unit/race.js",
+		//"tests/unit/runner.js" ,
+		//"tests/unit/tank.js",
+		//"tests/unit/user.js"
 	],
 	"reporters": [
 		"runner",
