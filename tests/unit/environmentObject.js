@@ -1,5 +1,6 @@
-import dataManager from "dataManager";
-import { EnvironmentObjects, EnvironmentObject } from "models/environmentObject";
+import dataManager from "dal/dataManager";
+import DBContext from "dal/dbContext";
+import EnvironmentObject from "dal/models/environmentObject";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 
@@ -57,7 +58,7 @@ bdd.describe("Test environment object", () => {
 		const environmentObject = new EnvironmentObject(expected.position);
 		const promise = environmentObject.save().then(() => {
 			expected.id = environmentObject.id;
-			return EnvironmentObject.get(environmentObject.id);
+			return DBContext.EnvironmentObjects.getById(environmentObject.id);
 		});
 		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(EnvironmentObject).and.deep.include(expected);
 	});
@@ -75,13 +76,13 @@ bdd.describe("Test environment object", () => {
 		const promise = environmentObject.save().then(() => {
 			expected.id = environmentObject.id;
 			environmentObject.position = expected.position;
-			return environmentObject.save().then(() => EnvironmentObject.get(environmentObject.id));
+			return environmentObject.save().then(() => DBContext.EnvironmentObjects.getById(environmentObject.id));
 		});
 		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(EnvironmentObject).and.deep.include(expected);
 	});
 
 	bdd.it("should get environment objects", () => {
-		const promise = EnvironmentObjects.get();
+		const promise = DBContext.EnvironmentObjects.get();
 		return promise.should.be.fulfilled.and.eventually.be.an("array");
 	});
 });

@@ -1,4 +1,4 @@
-import dataManager from "dataManager";
+import dataManager from "dal/dataManager";Manager from "dataManager";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 

@@ -1,6 +1,6 @@
-import dataManager from "dataManager";
-import { Users, User } from "models/user";
-import { Pod } from "models/pod";
+import dataManager from "dal/dataManager";
+import User from "dal/models/user";
+import Pod from "dal/models/pod";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import "date";

@@ -1,5 +1,6 @@
-import dataManager from "dataManager";
-import { Pods, Pod } from "models/pod";
+import dataManager from "dal/dataManager";Manager from "dataManager";
+import DBContext from "dal/dbContext";
+import Pod from "dal/models/pod";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 
@@ -38,19 +39,6 @@ bdd.describe("Test pod", () => {
 		return promise.should.be.fulfilled;
 	});
 
-	bdd.it("should get a pod", () => {
-		const expected = {
-			id: null,
-			name: "test"
-		};
-		const pod = new Pod(expected.name);
-		const promise = pod.save().then(() => {
-			expected.id = pod.id;
-			return Pod.get(expected.id);
-		});
-		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(Pod).and.include(expected);
-	});
-
 	bdd.it("should update a pod", () => {
 		const expected = {
 			id: null,
@@ -60,13 +48,8 @@ bdd.describe("Test pod", () => {
 		const promise = pod.save().then(() => {
 			expected.id = pod.id;
 			pod.name = expected.name;
-			return pod.save().then(() => Pod.get(pod.id));
+			return pod.save().then(() => DBContext.Pods.getById(pod.id));
 		});
 		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(Pod).and.include(expected);
-	});
-
-	bdd.it("should get pods", () => {
-		const promise = Pods.get();
-		return promise.should.be.fulfilled.and.eventually.be.an("array");
 	});
 });
