@@ -1,4 +1,4 @@
-import dataManager from "dal/dataManager";Manager from "dataManager";
+import dataManager from "dal/dataManager";
 import DBContext from "dal/dbContext";
 import Pod from "dal/models/pod";
 import chai from "chai";
