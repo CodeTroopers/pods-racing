@@ -46,23 +46,6 @@ bdd.describe("Test environment object", () => {
 		return promise.should.be.fulfilled;
 	});
 
-	bdd.it("should get an environment object", () => {
-		const expected = {
-			id: null,
-			position: {
-				x: 123,
-				y: 456,
-				z: 789
-			}
-		};
-		const environmentObject = new EnvironmentObject(expected.position);
-		const promise = environmentObject.save().then(() => {
-			expected.id = environmentObject.id;
-			return DBContext.EnvironmentObjects.getById(environmentObject.id);
-		});
-		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(EnvironmentObject).and.deep.include(expected);
-	});
-
 	bdd.it("should update an environment object", () => {
 		const expected = {
 			id: null,
@@ -79,10 +62,5 @@ bdd.describe("Test environment object", () => {
 			return environmentObject.save().then(() => DBContext.EnvironmentObjects.getById(environmentObject.id));
 		});
 		return promise.should.be.fulfilled.and.eventually.be.an.instanceof(EnvironmentObject).and.deep.include(expected);
-	});
-
-	bdd.it("should get environment objects", () => {
-		const promise = DBContext.EnvironmentObjects.get();
-		return promise.should.be.fulfilled.and.eventually.be.an("array");
 	});
 });
